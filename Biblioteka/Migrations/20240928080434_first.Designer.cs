@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Biblioteka.Migrations
 {
     [DbContext(typeof(BiblioApiDB))]
-    [Migration("20240926095111_First1")]
-    partial class First1
+    [Migration("20240928080434_first")]
+    partial class first
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -37,11 +37,14 @@ namespace Biblioteka.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("AvailableCopies")
+                        .HasColumnType("int");
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("GenreID")
+                    b.Property<int?>("GenreID")
                         .HasColumnType("int");
 
                     b.Property<string>("Title")
@@ -67,7 +70,6 @@ namespace Biblioteka.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id_Genre"));
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id_Genre");
@@ -98,12 +100,11 @@ namespace Biblioteka.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("StatusId")
-                        .HasColumnType("int");
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id_Reader");
-
-                    b.HasIndex("StatusId");
 
                     b.ToTable("Reader");
                 });
@@ -116,10 +117,10 @@ namespace Biblioteka.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id_Rental"));
 
-                    b.Property<int>("BookId")
+                    b.Property<int?>("BookId")
                         .HasColumnType("int");
 
-                    b.Property<int>("ReaderId")
+                    b.Property<int?>("ReaderId")
                         .HasColumnType("int");
 
                     b.Property<DateOnly>("RentalDate")
@@ -140,58 +141,24 @@ namespace Biblioteka.Migrations
                     b.ToTable("Rental");
                 });
 
-            modelBuilder.Entity("Biblioteka.Model.Status", b =>
-                {
-                    b.Property<int>("Id_Status")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id_Status"));
-
-                    b.Property<string>("Nazvanie")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id_Status");
-
-                    b.ToTable("Status");
-                });
-
             modelBuilder.Entity("Biblioteka.Model.Book", b =>
                 {
                     b.HasOne("Biblioteka.Model.Genre", "Genre")
                         .WithMany()
-                        .HasForeignKey("GenreID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("GenreID");
 
                     b.Navigation("Genre");
-                });
-
-            modelBuilder.Entity("Biblioteka.Model.Reader", b =>
-                {
-                    b.HasOne("Biblioteka.Model.Status", "Status")
-                        .WithMany()
-                        .HasForeignKey("StatusId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Status");
                 });
 
             modelBuilder.Entity("Biblioteka.Model.Rental", b =>
                 {
                     b.HasOne("Biblioteka.Model.Book", "Book")
                         .WithMany()
-                        .HasForeignKey("BookId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("BookId");
 
                     b.HasOne("Biblioteka.Model.Reader", "Reader")
                         .WithMany()
-                        .HasForeignKey("ReaderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ReaderId");
 
                     b.Navigation("Book");
 

@@ -9,14 +9,14 @@ namespace Biblioteka.Model
         [Key]
         public int Id_Rental { get; set; }
 
-        [Required]
-        [ForeignKey("Reader")]
-        public int ReaderId { get; set; }
-        public Reader Reader { get; set; }
-        [Required]
-        [ForeignKey("Book")]
-        public int BookId { get; set; }
-        public Book Book { get; set; }
+        
+        //[ForeignKey("Reader")]
+        public int? ReaderId { get; set; }
+        //public Reader Reader { get; set; }
+       
+        //[ForeignKey("Book")]
+        public int? BookId { get; set; }
+        //public Book Book { get; set; }
         public DateOnly RentalDate { get; set; }
         public DateOnly ReturnDate { get; set; }
         public bool Returned { get; internal set; }

@@ -2,7 +2,8 @@
 using Biblioteka.Model;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 [Route("api/[controller]")]
 [ApiController]
@@ -19,26 +20,54 @@ public class GenresController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Genre>>> GetGenres()
     {
-        return await _context.Genre.ToListAsync();
+        var genres = await _context.Genre.ToListAsync();
+        if (genres == null || genres.Count == 0)
+        {
+            return NotFound(new { Message = "Жанры не найдены." });
+        }
+        return Ok(genres);
+    }
+
+    // GET: api/genres/{id}
+    [HttpGet("{id}")]
+    public async Task<ActionResult<Genre>> GetGenre(int id)
+    {
+        var genre = await _context.Genre.FindAsync(id);
+        if (genre == null)
+        {
+            return NotFound(new { Message = "Жанр не найден." });
+        }
+        return Ok(genre);
     }
 
     // POST: api/genres
     [HttpPost]
-    public async Task<ActionResult<Genre>> PostGenre(Genre genre)
+    public async Task<ActionResult<Genre>> PostGenre([FromBody] Genre genre)
     {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
         _context.Genre.Add(genre);
+
         await _context.SaveChangesAsync();
 
-        return CreatedAtAction("GetGenre", new { id = genre.Id_Genre }, genre);
+        return CreatedAtAction(nameof(GetGenre), new { id = genre.Id_Genre }, genre);
     }
 
     // PUT: api/genres/{id}
     [HttpPut("{id}")]
-    public async Task<IActionResult> PutGenre(int id, Genre genre)
+    public async Task<IActionResult> PutGenre(int id, [FromBody] Genre genre)
     {
         if (id != genre.Id_Genre)
         {
-            return BadRequest();
+            return BadRequest(new { Message = "ID жанра не совпадает." });
+        }
+
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
         }
 
         _context.Entry(genre).State = EntityState.Modified;
@@ -51,15 +80,12 @@ public class GenresController : ControllerBase
         {
             if (!GenreExists(id))
             {
-                return NotFound();
+                return NotFound(new { Message = "Жанр не найден." });
             }
-            else
-            {
-                throw;
-            }
+            return StatusCode(StatusCodes.Status500InternalServerError, "Ошибка при обновлении жанра.");
         }
 
-        return NoContent();
+        return NoContent(); // Возврат 204 No Content
     }
 
     // DELETE: api/genres/{id}
@@ -69,13 +95,13 @@ public class GenresController : ControllerBase
         var genre = await _context.Genre.FindAsync(id);
         if (genre == null)
         {
-            return NotFound();
+            return NotFound(new { Message = "Жанр не найден." });
         }
 
         _context.Genre.Remove(genre);
         await _context.SaveChangesAsync();
 
-        return NoContent();
+        return NoContent(); // Возврат 204 No Content
     }
 
     private bool GenreExists(int id)
@@ -83,112 +109,4 @@ public class GenresController : ControllerBase
         return _context.Genre.Any(e => e.Id_Genre == id);
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//using Microsoft.AspNetCore.Http;
-//using Microsoft.AspNetCore.Mvc;
-//using Microsoft.EntityFrameworkCore;
-//using Biblioteka.DatabContext;
-//using Biblioteka.Model;
-//using Biblioteka.Requests;
-
-
-
-//namespace Biblioteka.Controllers
-//{
-
-//    [Route("api/[controller]")]
-//    [ApiController]
-//    public class GenresController : ControllerBase
-//    {
-//        private readonly BiblioApiDB _context;
-
-//        public GenresController(BiblioApiDB context)
-//        {
-//            _context = context;
-//        }
-
-//        // GET: api/genres
-//        [HttpGet]
-//        public async Task<ActionResult<IEnumerable<Genre>>> GetGenres()
-//        {
-//            return await _context.Genre.ToListAsync();
-//        }
-
-//        // POST: api/genres
-//        [HttpPost]
-//        public async Task<ActionResult<Genre>> PostGenre(Genre genre)
-//        {
-//            _context.Genre.Add(genre);
-//            await _context.SaveChangesAsync();
-
-//            return CreatedAtAction(nameof(Genre), new { Name = genre.Name }, genre);
-//        }
-
-//        // PUT: api/genres/5
-//        [HttpPut("{id}")]
-//        public async Task<IActionResult> PutGenre(int id, Genre genre)
-//        {
-//            if (id != genre.Id_Genre)
-//            {
-//                return BadRequest();
-//            }
-
-//            _context.Entry(genre).State = EntityState.Modified;
-//            await _context.SaveChangesAsync();
-
-//            return NoContent();
-//        }
-
-//        // DELETE: api/genres/5
-//        [HttpDelete("{id}")]
-//        public async Task<IActionResult> DeleteGenre(int id)
-//        {
-//            var genre = await _context.Genre.FindAsync(id);
-//            if (genre == null)
-//            {
-//                return NotFound();
-//            }
-
-//            _context.Genre.Remove(genre);
-//            await _context.SaveChangesAsync();
-
-//            return NoContent();
-//        }
-//    }
-
-
-
-//}
 

@@ -11,6 +11,8 @@ namespace Biblioteka.DatabContext
 
         }
 
+
+        public DbSet<Reader> Reader1 { get; set; }
         public DbSet<Book> Book { get; set; }
             public DbSet<Reader> Reader { get; set; }
             public DbSet<Genre> Genre { get; set; }

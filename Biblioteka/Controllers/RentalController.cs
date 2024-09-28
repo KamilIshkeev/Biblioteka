@@ -2,7 +2,9 @@
 using Biblioteka.Model;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 [Route("api/[controller]")]
 [ApiController]
@@ -17,28 +19,33 @@ public class RentalsController : ControllerBase
 
     // POST: api/rentals
     [HttpPost]
-    public async Task<ActionResult<Rental>> PostRental(Rental rental)
+    public async Task<ActionResult<Rental>> PostRental([FromBody] Rental rental)
     {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
         _context.Rental.Add(rental);
         await _context.SaveChangesAsync();
 
-        return CreatedAtAction("GetRental", new { id = rental.Id_Rental }, rental);
+        return CreatedAtAction(nameof(GetRental), new { id = rental.Id_Rental }, rental);
     }
 
     // PUT: api/rentals/return
-    [HttpPut("return")]
+    [HttpPut("return/{id}")]
     public async Task<IActionResult> ReturnRental(int id)
     {
         var rental = await _context.Rental.FindAsync(id);
         if (rental == null)
         {
-            return NotFound();
+            return NotFound(new { Message = "Аренда не найдена." });
         }
 
         _context.Rental.Remove(rental);
         await _context.SaveChangesAsync();
 
-        return NoContent();
+        return NoContent(); // Возврат 204 No Content
     }
 
     // GET: api/rentals/history/reader/{id}
@@ -46,7 +53,11 @@ public class RentalsController : ControllerBase
     public async Task<ActionResult<IEnumerable<Rental>>> GetRentalHistoryByReader(int id)
     {
         var rentals = await _context.Rental.Where(r => r.ReaderId == id).ToListAsync();
-        return rentals;
+        if (rentals == null || rentals.Count == 0)
+        {
+            return NotFound(new { Message = "Аренд для этого читателя не найдено." });
+        }
+        return Ok(rentals);
     }
 
     // GET: api/rentals/history/book/{id}
@@ -54,7 +65,11 @@ public class RentalsController : ControllerBase
     public async Task<ActionResult<IEnumerable<Rental>>> GetRentalHistoryByBook(int id)
     {
         var rentals = await _context.Rental.Where(r => r.BookId == id).ToListAsync();
-        return rentals;
+        if (rentals == null || rentals.Count == 0)
+        {
+            return NotFound(new { Message = "Аренд для этой книги не найдено." });
+        }
+        return Ok(rentals);
     }
 
     // GET: api/rentals/current
@@ -62,116 +77,27 @@ public class RentalsController : ControllerBase
     public async Task<ActionResult<IEnumerable<Rental>>> GetCurrentRentals()
     {
         var currentRentals = await _context.Rental.Where(r => r.ReturnDate == null).ToListAsync();
-        return currentRentals;
+        if (currentRentals == null || currentRentals.Count == 0)
+        {
+            return NotFound(new { Message = "Текущих аренд не найдено." });
+        }
+        return Ok(currentRentals);
+    }
+
+    // Дополнительный метод для получения информации о конкретной аренде
+    // GET: api/rentals/{id}
+    [HttpGet("{id}")]
+    public async Task<ActionResult<Rental>> GetRental(int id)
+    {
+        var rental = await _context.Rental.FindAsync(id);
+        if (rental == null)
+        {
+            return NotFound(new { Message = "Аренда не найдена." });
+        }
+        return Ok(rental);
     }
 }
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//using Biblioteka.DatabContext;
-//using Biblioteka.Model;
-//using Microsoft.AspNetCore.Http;
-//using Microsoft.AspNetCore.Mvc;
-//using Microsoft.EntityFrameworkCore;
-//using Microsoft.AspNetCore.Http;
-//using Biblioteka.Requests;
-
-//namespace Biblioteka.Controllers
-//{
-//    // RentalsController.cs
-//    [Route("api/[controller]")]
-//    [ApiController]
-//    public class RentalsController : ControllerBase
-//    {
-//        private readonly BiblioApiDB _context;
-
-//        public RentalsController(BiblioApiDB context)
-//        {
-//            _context = context;
-//        }
-
-//        // POST: api/rentals
-//        [HttpPost]
-//        public async Task<ActionResult<Rental>> PostRental(Rental rental)
-//        {
-//            _context.Rental.Add(rental);
-//            await _context.SaveChangesAsync();
-
-//            return CreatedAtAction(nameof(Rental), new { id = rental.Id_Rental }, rental);
-//        }
-
-//        // PUT: api/rentals/return/1
-//        [HttpPut("return/{rentalId}")]
-//        public async Task<IActionResult> ReturnRental(int rentalId)
-//        {
-//            var rental = await _context.Rental.FindAsync(rentalId);
-//            if (rental == null)
-//            {
-//                return NotFound();
-//            }
-
-//            rental.Returned = true;
-//            rental.ReturnDate = DateTime.UtcNow;
-//            _context.Entry(rental).State = EntityState.Modified;
-//            await _context.SaveChangesAsync();
-
-//            return NoContent();
-//        }
-
-//        // GET: api/rentals/history/1
-//        [HttpGet("history/{readerId}")]
-//        public async Task<ActionResult<IEnumerable<Rental>>> GetRentalHistoryByReader(int readerId)
-//        {
-//            return await _context.Rental
-//                .Where(r => r.ReaderId == readerId)
-//                .ToListAsync();
-//        }
-
-//        // GET: api/rentals/history/book/1
-//        [HttpGet("history/book/{bookId}")]
-//        public async Task<ActionResult<IEnumerable<Rental>>> GetRentalHistoryByBook(int bookId)
-//        {
-//            return await _context.Rental
-//                .Where(r => r.BookId == bookId)
-//                .ToListAsync();
-//        }
-
-//        // GET: api/rentals/current
-//        [HttpGet("current")]
-//        public async Task<ActionResult<IEnumerable<Rental>>> GetCurrentRentals()
-//        {
-//            return await _context.Rental
-//                .Where(r => !r.Returned)
-//                .ToListAsync();
-//        }
-//    }
-//}

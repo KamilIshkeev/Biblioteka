@@ -8,7 +8,7 @@ namespace Biblioteka.Model
     {
         [Key]
         public int Id_Genre { get; set; }
-        public string Name { get; set; }
+        public string? Name { get; set; }
        
     }
 }
