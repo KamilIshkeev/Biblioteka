@@ -13,7 +13,7 @@ namespace Biblioteka.Model
         public DateOnly DateOfBirth { get; set; }
         public string ContactDetails { get; set; }
         
-        public string Status { get; set; }
+       
 
     }
 }

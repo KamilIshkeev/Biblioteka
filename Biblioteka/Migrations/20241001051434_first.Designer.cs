@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Biblioteka.Migrations
 {
     [DbContext(typeof(BiblioApiDB))]
-    [Migration("20240928080434_first")]
+    [Migration("20241001051434_first")]
     partial class first
     {
         /// <inheritdoc />
@@ -44,7 +44,7 @@ namespace Biblioteka.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("GenreID")
+                    b.Property<int>("GenreID")
                         .HasColumnType("int");
 
                     b.Property<string>("Title")
@@ -145,7 +145,9 @@ namespace Biblioteka.Migrations
                 {
                     b.HasOne("Biblioteka.Model.Genre", "Genre")
                         .WithMany()
-                        .HasForeignKey("GenreID");
+                        .HasForeignKey("GenreID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Genre");
                 });

@@ -25,34 +25,8 @@ namespace Biblioteka.Requests
             services.AddDbContext<BiblioApiDB>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("BiblioDBString")), ServiceLifetime.Scoped);
 
-            // Настройка аутентификации JWT
-            services.AddAuthentication(options =>
-            {
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
-            .AddJwtBearer(options =>
-            {
-                options.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuer = true,
-                    ValidateAudience = true,
-                    ValidateLifetime = true,
-                    ValidateIssuerSigningKey = true,
-                    ValidIssuer = Configuration["Jwt:Issuer"],
-                    ValidAudience = Configuration["Jwt:Audience"],
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Key"]))
-                };
-                options.Events = new JwtBearerEvents
-                {
-                    OnAuthenticationFailed = context =>
-                    {
-                        // Логирование ошибок аутентификации
-                        Console.WriteLine("Authentication failed: " + context.Exception.Message);
-                        return Task.CompletedTask;
-                    }
-                };
-            });
+          
+            
 
             services.AddControllers();
 
@@ -98,7 +72,7 @@ namespace Biblioteka.Requests
             app.UseHttpsRedirection();
             app.UseRouting();
 
-            app.UseAuthentication(); // Должно быть перед UseAuthorization 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseSwagger();

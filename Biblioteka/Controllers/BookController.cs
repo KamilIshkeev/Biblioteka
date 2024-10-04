@@ -22,7 +22,7 @@ public class BooksController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Book>>> GetBooks()
     {
-        // Получаем список книг из базы данных
+        
         var books = await _context.Book.ToListAsync();
         return Ok(books); // Возврат списка книг с кодом 200
     }
@@ -31,7 +31,7 @@ public class BooksController : ControllerBase
     [HttpGet("{id}")]
     public async Task<ActionResult<Book>> GetBook(int id)
     {
-        // Ищем книгу по ID
+        
         var book = await _context.Book.FindAsync(id);
         if (book == null)
         {
@@ -44,13 +44,13 @@ public class BooksController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<Book>> PostBook([FromBody] Book book)
     {
-        // Валидация модели
+        
         if (!ModelState.IsValid)
         {
-            return BadRequest(ModelState); // Возврат ошибок валидации
+            return BadRequest(ModelState); 
         }
 
-        // Валидация объекта книги
+   
         var validationResults = new List<ValidationResult>();
         var isValid = Validator.TryValidateObject(book, new ValidationContext(book), validationResults);
         if (!isValid)
@@ -58,7 +58,7 @@ public class BooksController : ControllerBase
             return BadRequest(validationResults.Select(r => r.ErrorMessage).ToArray());
         }
 
-        // Добавляем книгу в контекст
+     
         await _context.Book.AddAsync(book);
         await _context.SaveChangesAsync();
 
@@ -70,12 +70,15 @@ public class BooksController : ControllerBase
     [HttpPut("{id}")]
     public async Task<IActionResult> PutBook(int id, [FromBody] Book book)
     {
+
+
         if (id != book.Id_Book)
         {
             return BadRequest(new { Message = "ID книги не совпадает." });
         }
 
         _context.Entry(book).State = EntityState.Modified;
+        
 
         try
         {
@@ -97,7 +100,7 @@ public class BooksController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteBook(int id)
     {
-        // Ищем книгу по ID
+       
         var book = await _context.Book.FindAsync(id);
         if (book == null)
         {
@@ -110,7 +113,6 @@ public class BooksController : ControllerBase
         return NoContent(); // Возврат 204 No Content
     }
 
-    // Проверяем, существует ли книга с данным ID
     private bool BookExists(int id)
     {
         return _context.Book.Any(e => e.Id_Book == id);

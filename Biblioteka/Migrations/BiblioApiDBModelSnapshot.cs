@@ -41,7 +41,7 @@ namespace Biblioteka.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("GenreID")
+                    b.Property<int>("GenreID")
                         .HasColumnType("int");
 
                     b.Property<string>("Title")
@@ -142,7 +142,9 @@ namespace Biblioteka.Migrations
                 {
                     b.HasOne("Biblioteka.Model.Genre", "Genre")
                         .WithMany()
-                        .HasForeignKey("GenreID");
+                        .HasForeignKey("GenreID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Genre");
                 });

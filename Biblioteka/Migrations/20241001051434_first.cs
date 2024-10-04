@@ -49,7 +49,7 @@ namespace Biblioteka.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Author = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    GenreID = table.Column<int>(type: "int", nullable: true),
+                    GenreID = table.Column<int>(type: "int", nullable: false),
                     Year = table.Column<int>(type: "int", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     AvailableCopies = table.Column<int>(type: "int", nullable: false)
@@ -61,7 +61,8 @@ namespace Biblioteka.Migrations
                         name: "FK_Book_Genre_GenreID",
                         column: x => x.GenreID,
                         principalTable: "Genre",
-                        principalColumn: "Id_Genre");
+                        principalColumn: "Id_Genre",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(

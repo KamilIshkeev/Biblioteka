@@ -84,7 +84,6 @@ public class RentalsController : ControllerBase
         return Ok(currentRentals);
     }
 
-    // Дополнительный метод для получения информации о конкретной аренде
     // GET: api/rentals/{id}
     [HttpGet("{id}")]
     public async Task<ActionResult<Rental>> GetRental(int id)
