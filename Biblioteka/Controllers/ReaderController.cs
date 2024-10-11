@@ -1,125 +1,42 @@
-﻿using Biblioteka.DatabContext;
+﻿using Biblioteka.Interfaces;
 using Biblioteka.Model;
+using Biblioteka.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using static Biblioteka.Services.ReaderService;
+
 
 [Route("api/[controller]")]
 [ApiController]
 public class ReadersController : ControllerBase
 {
-    private readonly BiblioApiDB _context;
+    private readonly IReaderService _readerService;
 
-    public ReadersController(BiblioApiDB context)
+    public ReadersController(IReaderService readerService)
     {
-        _context = context;
+        _readerService = readerService;
     }
 
-    // GET: api/readers
+    [HttpGet("readers")]
+    public async Task<IActionResult> GetReaders1([FromQuery] ReaderSearchFilter filter, [FromQuery] PaginationParams pagination) => await _readerService.GetReaders1Async(filter, pagination);
+
+
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Reader>>> GetReaders()
-    {
-        var readers = await _context.Reader.ToListAsync();
-        if (readers == null || !readers.Any())
-        {
-            return NotFound(new { Message = "Читатели не найдены." });
-        }
-        return Ok(readers);
-    }
+    public async Task<ActionResult<IEnumerable<Reader>>> GetReaders() => await _readerService.GetReadersAsync();
 
-    // GET: api/readers/{id}
     [HttpGet("{id}")]
-    public async Task<ActionResult<Reader>> GetReader(int id)
-    {
-        var reader = await _context.Reader.FindAsync(id);
-        if (reader == null)
-        {
-            return NotFound(new { Message = "Читатель не найден." });
-        }
-        return Ok(reader);
-    }
+    public async Task<ActionResult<Reader>> GetReader(int id) => await _readerService.GetReaderAsync(id);
 
-    // POST: api/readers
     [HttpPost]
-    public async Task<ActionResult<Reader>> PostReader([FromBody] Reader reader)
-    {
-        if (!ModelState.IsValid)
-        {
-            return BadRequest(new { Message = "Некорректные данные.", Errors = ModelState });
-        }
+    public async Task<ActionResult<Reader>> PostReader([FromBody] Reader reader) => await _readerService.PostReaderAsync(reader);
 
-        await _context.Reader.AddAsync(reader);
-        await _context.SaveChangesAsync();
-
-        return CreatedAtAction(nameof(GetReader), new { id = reader.Id_Reader }, reader);
-    }
-
-    // PUT: api/readers/{id}
     [HttpPut("{id}")]
-    public async Task<IActionResult> PutReader(int id, [FromBody] Reader reader)
-    {
-        if (id != reader.Id_Reader)
-        {
-            return BadRequest(new { Message = "ID читателя не совпадает." });
-        }
+    public async Task<IActionResult> PutReader(int id, [FromBody] Reader reader) => await _readerService.PutReaderAsync(id, reader);
 
-        if (!ModelState.IsValid)
-        {
-            return BadRequest(new { Message = "Некорректные данные.", Errors = ModelState });
-        }
-
-        _context.Entry(reader).State = EntityState.Modified;
-
-        try
-        {
-            await _context.SaveChangesAsync();
-        }
-        catch (DbUpdateConcurrencyException)
-        {
-            if (!ReaderExists(id))
-            {
-                return NotFound(new { Message = "Читатель не найден." });
-            }
-            return StatusCode(StatusCodes.Status500InternalServerError, "Ошибка при обновлении читателя.");
-        }
-
-        return NoContent(); // Возврат 204 No Content
-    }
-
-    // DELETE: api/readers/{id}
     [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteReader(int id)
-    {
-        var reader = await _context.Reader.FindAsync(id);
-        if (reader == null)
-        {
-            return NotFound(new { Message = "Читатель не найден." });
-        }
+    public async Task<IActionResult> DeleteReader(int id) => await _readerService.DeleteReaderAsync(id);
 
-        _context.Reader.Remove(reader);
-        await _context.SaveChangesAsync();
-
-        return NoContent(); // Возврат 204 No Content
-    }
-
-    // GET: api/readers/{id}/rentals
     [HttpGet("{id}/rentals")]
-    public async Task<ActionResult<IEnumerable<Rental>>> GetReaderRentals(int id)
-    {
-        var rentals = await _context.Rental.Where(r => r.ReaderId == id).ToListAsync();
-        if (rentals == null || !rentals.Any())
-        {
-            return NotFound(new { Message = "Нет аренд для этого читателя." });
-        }
-        return Ok(rentals);
-    }
-
-    private bool ReaderExists(int id)
-    {
-        return _context.Reader.Any(e => e.Id_Reader == id);
-    }
+    public async Task<ActionResult<IEnumerable<Rental>>> GetReaderRentals(int id) => await _readerService.GetReaderRentalsAsync(id);
 }
 
 

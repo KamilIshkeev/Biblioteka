@@ -1,4 +1,6 @@
 ﻿using Biblioteka.DatabContext;
+using Biblioteka.Interfaces;
+using Biblioteka.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -22,8 +24,19 @@ namespace Biblioteka.Requests
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddScoped<IBookService, BookService>();
+            services.AddScoped<IGenreService, GenreService>();
+            services.AddScoped<IReaderService, ReaderService>();
+            services.AddScoped<IRentalService, RentalService>();
+            
+
+
             services.AddDbContext<BiblioApiDB>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("BiblioDBString")), ServiceLifetime.Scoped);
+                options.UseSqlServer(Configuration.GetConnectionString("BiblioDBString")), ServiceLifetime.Scoped); //Or your DB connection string
+
+
+            //services.AddDbContext<BiblioApiDB>(options =>
+            //    options.UseSqlServer(Configuration.GetConnectionString("BiblioDBString")), ServiceLifetime.Scoped);
 
           
             
