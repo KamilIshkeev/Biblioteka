@@ -20,8 +20,6 @@ builder.Services.AddDbContext<BiblioApiDB>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("BiblioDbString")), ServiceLifetime.Scoped);
 
 
-//builder.Services.AddDbContext<BiblioApiDB>(options =>
-//    options.UseSqlServer(builder.Configuration.GetConnectionString("BiblioApiDB"))); //Or your DB connection string
 
 var app = builder.Build();
 

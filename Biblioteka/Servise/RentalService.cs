@@ -35,8 +35,7 @@ namespace Biblioteka.Services
             }
             catch (DbUpdateException ex)
             {
-                // Log the exception with details for debugging (e.g., using Serilog)
-                // Log.Error(ex, "Error saving book to database: {ExceptionMessage}", ex.Message); 
+                 
                 return new StatusCodeResult(StatusCodes.Status500InternalServerError);
             }
 

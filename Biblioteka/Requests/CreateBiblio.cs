@@ -32,13 +32,8 @@ namespace Biblioteka.Requests
 
 
             services.AddDbContext<BiblioApiDB>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("BiblioDBString")), ServiceLifetime.Scoped); //Or your DB connection string
-
-
-            //services.AddDbContext<BiblioApiDB>(options =>
-            //    options.UseSqlServer(Configuration.GetConnectionString("BiblioDBString")), ServiceLifetime.Scoped);
-
-          
+                options.UseSqlServer(Configuration.GetConnectionString("BiblioDBString")), ServiceLifetime.Scoped); 
+        
             
 
             services.AddControllers();

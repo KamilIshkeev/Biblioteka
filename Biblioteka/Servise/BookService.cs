@@ -26,14 +26,14 @@ namespace Biblioteka.Services
             var query = _context.Book.AsQueryable();
 
             if (!string.IsNullOrEmpty(filter.Genre))
-                query = query.Where(b => Convert.ToString(b.GenreID).Contains(filter.Genre)); // Assuming Genre navigation property with Name
+                query = query.Where(b => Convert.ToString(b.GenreID).Contains(filter.Genre)); 
 
 
             var totalItems = query.Count();
             var bookTitles = query
                 .Skip((pagination.Page - 1) * pagination.PageSize)
                 .Take(pagination.PageSize)
-                .Select(b => b.Title) // Select only the Title property
+                .Select(b => b.Title) 
                 .ToList();
 
             var response = new PagedResponse<List<string>>(bookTitles, pagination.Page, pagination.PageSize, totalItems);
@@ -43,15 +43,15 @@ namespace Biblioteka.Services
         public class BookSearchFilter
         {
 
-            public string Genre { get; set; }//Nullable int to handle optional year
+            public string Genre { get; set; }
         }
 
         public class PaginationParams
         {
-            public int Page { get; set; } = 1; //Default to page 1
-            public int PageSize { get; set; } = 10; //Default to 10 items per page
+            public int Page { get; set; } = 1; 
+            public int PageSize { get; set; } = 10; 
 
-            // Modified PagedResponse to handle List<string>
+           
             public class PagedResponse<T>
             {
                 public PagedResponse(T data, int page, int pageSize, int totalItems)
@@ -103,8 +103,7 @@ namespace Biblioteka.Services
             }
             catch (DbUpdateException ex)
             {
-                // Log the exception with details for debugging (e.g., using Serilog)
-                // Log.Error(ex, "Error saving book to database: {ExceptionMessage}", ex.Message); 
+                 
                 return new StatusCodeResult(StatusCodes.Status500InternalServerError);
             }
         }
@@ -165,44 +164,3 @@ namespace Biblioteka.Services
 
 
 
-
-
-
-//using Biblioteka.DatabContext;
-//using Biblioteka.Intefaces;
-//using Biblioteka.Model;
-//using Microsoft.AspNetCore.Mvc;
-//using Microsoft.AspNetCore.Mvc.Core;
-//using Microsoft.AspNetCore.Mvc.ModelBinding;
-//using Microsoft.EntityFrameworkCore;
-//using System.ComponentModel.DataAnnotations;
-
-//namespace Biblioteka.Servise
-//{
-//    public class BookService : IBookService
-//    {
-
-//        private readonly BiblioApiDB _context;
-
-//        public BookService(BiblioApiDB context)
-//        {
-//            _context = context;
-//        }
-
-//        public async Task<ActionResult> GetBooks()
-//        {
-
-//            var books = await _context.Book.ToListAsync();
-//            return new OkObjectResult(books); // Возврат списка книг с кодом 200
-//        }
-
-//        public async Task<ActionResult> PostBook(Book book)
-//        {
-//            await _context.Book.AddAsync(book);
-//            await _context.SaveChangesAsync();
-
-//            // Возврат созданной книги с кодом 201 и ссылкой на GET-запрос
-//            return new CreatedAtActionResult(nameof(GetBooks), new { id = book.Id_Book }, book);
-//        }
-//    }
-//}

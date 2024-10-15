@@ -26,14 +26,14 @@ namespace Biblioteka.Services
         var query = _context.Reader.AsQueryable();
 
             if (!string.IsNullOrEmpty(filter.FirstName))
-                query = query.Where(b => b.FirstName.Contains(filter.FirstName)); // Assuming Genre navigation property with Name
+                query = query.Where(b => b.FirstName.Contains(filter.FirstName)); 
 
 
             var totalItems = query.Count();
             var lastName = query
                 .Skip((pagination.Page - 1) * pagination.PageSize)
                 .Take(pagination.PageSize)
-                .Select(b => b.LastName) // Select only the Title property
+                .Select(b => b.LastName) 
                 .ToList();
 
             var response = new PagedResponse<List<string>>(lastName, pagination.Page, pagination.PageSize, totalItems);
@@ -43,15 +43,15 @@ namespace Biblioteka.Services
         public class ReaderSearchFilter
         {
 
-            public string FirstName { get; set; }//Nullable int to handle optional year
+            public string FirstName { get; set; }
         }
 
         public class PaginationParams
         {
-            public int Page { get; set; } = 1; //Default to page 1
-            public int PageSize { get; set; } = 10; //Default to 10 items per page
+            public int Page { get; set; } = 1; 
+            public int PageSize { get; set; } = 10; 
 
-            // Modified PagedResponse to handle List<string>
+            
             public class PagedResponse<T>
             {
                 public PagedResponse(T data, int page, int pageSize, int totalItems)
@@ -101,8 +101,7 @@ namespace Biblioteka.Services
             }
             catch (DbUpdateException ex)
             {
-                // Log the exception with details for debugging (e.g., using Serilog)
-                // Log.Error(ex, "Error saving book to database: {ExceptionMessage}", ex.Message); 
+                 
                 return new StatusCodeResult(StatusCodes.Status500InternalServerError);
             }
         }
@@ -126,7 +125,7 @@ namespace Biblioteka.Services
                 {
                     return new NotFoundObjectResult(new { Message = "Читатель не найден." });
                 }
-                // Log the exception for debugging.  Example using Serilog:  Log.Error(ex, "Error updating genre");
+                
                 return new StatusCodeResult(StatusCodes.Status500InternalServerError);
             }
 
