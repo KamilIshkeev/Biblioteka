@@ -25,9 +25,9 @@ namespace Biblioteka.Services
            
         var query = _context.Reader.AsQueryable();
 
-            if (!string.IsNullOrEmpty(filter.FirstName))
-                query = query.Where(b => b.FirstName.Contains(filter.FirstName)); 
-
+            
+            if (filter.DateOfBirth.HasValue)
+                query = query.Where(b => b.DateOfBirth == filter.DateOfBirth.Value);
 
             var totalItems = query.Count();
             var lastName = query
@@ -42,8 +42,8 @@ namespace Biblioteka.Services
 
         public class ReaderSearchFilter
         {
-
-            public string FirstName { get; set; }
+            public DateOnly? DateOfBirth { get; set; }
+          
         }
 
         public class PaginationParams
@@ -159,3 +159,5 @@ namespace Biblioteka.Services
         
     }
 }
+
+

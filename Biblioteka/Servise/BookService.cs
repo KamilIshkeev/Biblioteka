@@ -25,15 +25,24 @@ namespace Biblioteka.Services
         {
             var query = _context.Book.AsQueryable();
 
+            if (!string.IsNullOrEmpty(filter.Title))
+                query = query.Where(b => b.Title.Contains(filter.Title));
+
+            if (!string.IsNullOrEmpty(filter.Author))
+                query = query.Where(b => b.Author.Contains(filter.Author));
+
             if (!string.IsNullOrEmpty(filter.Genre))
-                query = query.Where(b => Convert.ToString(b.GenreID).Contains(filter.Genre)); 
+                query = query.Where(b => Convert.ToString(b.GenreID).Contains(filter.Genre));
+
+            if (filter.Year.HasValue)
+                query = query.Where(b => b.Year == filter.Year.Value);
 
 
             var totalItems = query.Count();
             var bookTitles = query
                 .Skip((pagination.Page - 1) * pagination.PageSize)
                 .Take(pagination.PageSize)
-                .Select(b => b.Title) 
+                .Select(b => b.Description) 
                 .ToList();
 
             var response = new PagedResponse<List<string>>(bookTitles, pagination.Page, pagination.PageSize, totalItems);
@@ -42,8 +51,10 @@ namespace Biblioteka.Services
 
         public class BookSearchFilter
         {
-
+            public string Title { get; set; }
+            public string Author { get; set; }
             public string Genre { get; set; }
+            public int? Year { get; set; }
         }
 
         public class PaginationParams
