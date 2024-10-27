@@ -10,74 +10,63 @@ using System.Threading.Tasks;
 
 namespace Biblioteka.Services
 {
-    public class RentalService : IRentalService
+    public class RentalService(BiblioApiDB context) : IRentalService
     {
-        private readonly BiblioApiDB _context;
+        readonly BiblioApiDB _context = context;
 
-        public RentalService(BiblioApiDB context)
+        public async Task RentBookById(int id, int readerId, int rentalTime)
         {
-            _context = context;
-        }
-
-        public async Task<ActionResult<Rental>> PostRentalAsync(Rental rental)
-        {
-            var validationResults = new List<ValidationResult>();
-            if (!Validator.TryValidateObject(rental, new ValidationContext(rental), validationResults, true))
+            var checkBook = await _context.Book.FirstOrDefaultAsync(b => b.Id_Book == id);
+            var checkReader = await _context.Reader.FirstOrDefaultAsync(r => r.Id_Reader == readerId);
+            //var bookExemplar = await _context.BookExemplar.FirstOrDefaultAsync(e => e.Book_Id == checkBook.Id_Book);
+            var rental = new Rental()
             {
-                return new BadRequestObjectResult(validationResults.Select(r => r.ErrorMessage));
-            }
-
-            try
-            {
-                await _context.Rental.AddAsync(rental);
-                await _context.SaveChangesAsync();
-                return new OkObjectResult(rental);
-            }
-            catch (DbUpdateException ex)
-            {
-                 
-                return new StatusCodeResult(StatusCodes.Status500InternalServerError);
-            }
-
-            
-        }
-
-
-        public async Task<IActionResult> ReturnRentalAsync(int id)
-        {
-            var rental = await _context.Rental.FindAsync(id);
-            if (rental == null)
-            {
-                return new NotFoundObjectResult(new { Message = "Аренда не найдена." });
-            }
-
-            _context.Rental.Remove(rental);
+                Id_Book = checkBook.Id_Book,
+                Id_Reader = checkReader.Id_Reader,
+                Rental_Start = DateTime.Now,
+                Rental_Time = rentalTime,
+                Rental_End = DateTime.Now.AddDays(rentalTime),
+                Rental_Status = "нет"
+            };
+            await _context.Rental.AddAsync(rental);
+            //bookExemplar.Books_Count -= 1;
             await _context.SaveChangesAsync();
-            return new NoContentResult();
         }
 
-        public async Task<ActionResult<IEnumerable<Rental>>> GetRentalHistoryByReaderAsync(int id)
+        public async Task ReturnRent(int rentId)
         {
-            var rentals = await _context.Rental.Where(r => r.ReaderId == id).ToListAsync();
-            return rentals == null || !rentals.Any() ? new NotFoundObjectResult(new { Message = "Аренд для этого читателя не найдено." }) : new OkObjectResult(rentals);
+            var checkRent = await _context.Rental.FirstOrDefaultAsync(r => r.id_Rent == rentId);
+            //var bookExemplar = await _context.BookExemplar.FirstOrDefaultAsync(e => e.Book_Id == checkRent.Id_Book);
+            checkRent.Rental_Status = "да";
+            //bookExemplar.Books_Count += 1;
+            await _context.SaveChangesAsync();
+        }
+        public List<Rental> GetBookRentals(int id)
+        {
+            return _context.Rental.Where(h => h.Id_Book == id).Include(h => h.Book).ToList();
         }
 
-        public async Task<ActionResult<IEnumerable<Rental>>> GetRentalHistoryByBookAsync(int id)
+        public List<Rental> GetCurrentRentals()
         {
-            var rentals = await _context.Rental.Where(r => r.BookId == id).ToListAsync();
-            return rentals == null || !rentals.Any() ? new NotFoundObjectResult(new { Message = "Аренд для этой книги не найдено." }) : new OkObjectResult(rentals);
+            return _context.Rental.Where(h => h.Rental_Status == "нет").Include(h => h.Book).Include(h => h.Reader).ToList();
         }
 
-        public async Task<ActionResult<IEnumerable<Rental>>> GetCurrentRentalsAsync()
+        public List<Rental> GetReadersRentals(int id)
         {
-            var currentRentals = await _context.Rental.Where(r => r.ReturnDate == null).ToListAsync();
-            return currentRentals == null || !currentRentals.Any() ? new NotFoundObjectResult(new { Message = "Текущих аренд не найдено." }) : new OkObjectResult(currentRentals);
-        }
 
-        public async Task<ActionResult<Rental>> GetRentalAsync(int id)
+            return _context.Rental.Where(r => r.Id_Reader == id).Include(h => h.Book).Include(h => h.Reader).ToList();
+        }
+        public bool BookInRentExists(int bookId)
         {
-            var rental = await _context.Rental.FindAsync(id);
-            return rental == null ? new NotFoundObjectResult(new { Message = "Аренда не найдена." }) : new OkObjectResult(rental);
+            return _context.Rental.Any(r => r.Id_Book == bookId);
+        }
+        public bool RentExists(int id)
+        {
+            return _context.Rental.Any(r => r.id_Rent == id);
+        }
+        public bool ReaderInRent(int id)
+        {
+            return _context.Rental.Any(r => r.Id_Reader == id);
         }
     }
 }

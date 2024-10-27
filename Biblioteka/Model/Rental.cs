@@ -7,18 +7,21 @@ namespace Biblioteka.Model
     public class Rental
     {
         [Key]
-        public int Id_Rental { get; set; }
+        public int id_Rent { get; set; }
+        public DateTime Rental_Start { get; set; }
+        public int Rental_Time { get; set; }
 
 
-        //[ForeignKey("Reader")]
-        public int? ReaderId { get; set; }
-        //public Reader Reader { get; set; }
+        [ForeignKey(nameof(Reader))]
+        public int Id_Reader { get; set; }
+        public Reader Reader { get; set; }
 
-        //[ForeignKey("Book")]
-        public int? BookId { get; set; }
-        //public Book Book { get; set; }
-        public DateOnly RentalDate { get; set; }
-        public DateOnly ReturnDate { get; set; }
-        public bool Returned { get; internal set; }
+        [ForeignKey(nameof(Book))]
+        public int Id_Book { get; set; }
+        public Book Book { get; set; }
+        public DateTime Rental_End { get; set; }
+        public string Rental_Status { get; set; }
+
+
     }
 }

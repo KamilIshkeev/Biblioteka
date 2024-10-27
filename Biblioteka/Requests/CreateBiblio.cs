@@ -26,15 +26,15 @@ namespace Biblioteka.Requests
         {
             services.AddScoped<IBookService, BookService>();
             services.AddScoped<IGenreService, GenreService>();
-            services.AddScoped<IReaderService, ReaderService>();
+            //services.AddScoped<IReaderService, ReaderService>();
             services.AddScoped<IRentalService, RentalService>();
             
 
 
             services.AddDbContext<BiblioApiDB>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("BiblioDBString")), ServiceLifetime.Scoped); 
-        
-            
+                options.UseSqlServer(Configuration.GetConnectionString("BiblioDBString")), ServiceLifetime.Scoped);
+
+
 
             services.AddControllers();
 

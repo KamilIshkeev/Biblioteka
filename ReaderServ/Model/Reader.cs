@@ -1,11 +1,12 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Data;
+﻿using System.ComponentModel.DataAnnotations; 
+using System.ComponentModel.DataAnnotations.Schema; 
 
 
-namespace Biblioteka.Model
+
+
+namespace ReaderServ.Model
 {
-    public class Reader
+    public class Readers
     {
         [Key]
         public int Id_Reader { get; set; }
@@ -16,8 +17,6 @@ namespace Biblioteka.Model
         [ForeignKey(nameof(Role))]
         public int? Id_Role { get; set; } = 2;
         public Roles Role { get; set; }
-
-
 
     }
 }

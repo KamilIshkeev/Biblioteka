@@ -1,4 +1,5 @@
 ﻿using Biblioteka.Model;
+using Biblioteka.Requests;
 using Biblioteka.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
@@ -9,14 +10,14 @@ namespace Biblioteka.Interfaces
 {
     public interface IReaderService
     {
-        Task<IActionResult> GetReaders1Async([FromQuery] ReaderSearchFilter filter, [FromQuery] PaginationParams pagination);
-        Task<ActionResult<IEnumerable<Reader>>> GetReadersAsync();
-        Task<ActionResult<Reader>> GetReaderAsync(int id);
-        Task<ActionResult<Reader>> PostReaderAsync(Reader reader);
-        Task<IActionResult> PutReaderAsync(int id, Reader reader);
-        Task<IActionResult> DeleteReaderAsync(int id);
-        Task<ActionResult<IEnumerable<Rental>>> GetReaderRentalsAsync(int id);
-        Task<bool> ReaderExistsAsync(int id);
-        
+        public List<Reader> GetAllReaders([FromQuery] int? page, [FromQuery] int? pageSize);
+        public Task AddNewReader(createReader reader);
+        public Reader GetReaderById(int id);
+        public Task UpdateReaderById(int id, createReader reader);
+        public Task DeleteReaderById(int id);
+        public List<Rental> GetReadersRentals(int id);
+        public bool ReaderExists(string login);
+        public List<Reader> GetAll();
+
     }
 }

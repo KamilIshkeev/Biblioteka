@@ -53,8 +53,6 @@ namespace Biblioteka.Migrations
 
                     b.HasKey("Id_Book");
 
-                    b.HasIndex("GenreID");
-
                     b.ToTable("Book");
                 });
 
@@ -82,82 +80,106 @@ namespace Biblioteka.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id_Reader"));
 
-                    b.Property<string>("ContactDetails")
+                    b.Property<DateTime>("Date_Birth")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("Id_Role")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Login")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateOnly>("DateOfBirth")
-                        .HasColumnType("date");
-
-                    b.Property<string>("FirstName")
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Status")
+                    b.Property<string>("Password")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id_Reader");
+
+                    b.HasIndex("Id_Role");
 
                     b.ToTable("Reader");
                 });
 
             modelBuilder.Entity("Biblioteka.Model.Rental", b =>
                 {
-                    b.Property<int>("Id_Rental")
+                    b.Property<int>("id_Rent")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id_Rental"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id_Rent"));
 
-                    b.Property<int?>("BookId")
+                    b.Property<int>("Id_Book")
                         .HasColumnType("int");
 
-                    b.Property<int?>("ReaderId")
+                    b.Property<int>("Id_Reader")
                         .HasColumnType("int");
 
-                    b.Property<DateOnly>("RentalDate")
-                        .HasColumnType("date");
+                    b.Property<DateTime>("Rental_End")
+                        .HasColumnType("datetime2");
 
-                    b.Property<DateOnly>("ReturnDate")
-                        .HasColumnType("date");
+                    b.Property<DateTime>("Rental_Start")
+                        .HasColumnType("datetime2");
 
-                    b.Property<bool>("Returned")
-                        .HasColumnType("bit");
+                    b.Property<string>("Rental_Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("Id_Rental");
+                    b.Property<int>("Rental_Time")
+                        .HasColumnType("int");
 
-                    b.HasIndex("BookId");
+                    b.HasKey("id_Rent");
 
-                    b.HasIndex("ReaderId");
+                    b.HasIndex("Id_Book");
+
+                    b.HasIndex("Id_Reader");
 
                     b.ToTable("Rental");
                 });
 
-            modelBuilder.Entity("Biblioteka.Model.Book", b =>
+            modelBuilder.Entity("Biblioteka.Model.Roles", b =>
                 {
-                    b.HasOne("Biblioteka.Model.Genre", "Genre")
-                        .WithMany()
-                        .HasForeignKey("GenreID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Property<int>("Id_Role")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-                    b.Navigation("Genre");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id_Role"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id_Role");
+
+                    b.ToTable("Roles");
+                });
+
+            modelBuilder.Entity("Biblioteka.Model.Reader", b =>
+                {
+                    b.HasOne("Biblioteka.Model.Roles", "Role")
+                        .WithMany()
+                        .HasForeignKey("Id_Role");
+
+                    b.Navigation("Role");
                 });
 
             modelBuilder.Entity("Biblioteka.Model.Rental", b =>
                 {
                     b.HasOne("Biblioteka.Model.Book", "Book")
                         .WithMany()
-                        .HasForeignKey("BookId");
+                        .HasForeignKey("Id_Book")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Biblioteka.Model.Reader", "Reader")
                         .WithMany()
-                        .HasForeignKey("ReaderId");
+                        .HasForeignKey("Id_Reader")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Book");
 

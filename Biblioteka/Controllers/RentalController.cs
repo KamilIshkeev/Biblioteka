@@ -13,23 +13,31 @@ public class RentalsController : ControllerBase
         _rentalService = rentalService;
     }
 
-    [HttpPost]
-    public async Task<ActionResult<Rental>> PostRental([FromBody] Rental rental) => await _rentalService.PostRentalAsync(rental);
-
-    [HttpPut("return/{id}")]
-    public async Task<IActionResult> ReturnRental(int id) => await _rentalService.ReturnRentalAsync(id);
-
-    [HttpGet("history/reader/{id}")]
-    public async Task<ActionResult<IEnumerable<Rental>>> GetRentalHistoryByReader(int id) => await _rentalService.GetRentalHistoryByReaderAsync(id);
-
-    [HttpGet("history/book/{id}")]
-    public async Task<ActionResult<IEnumerable<Rental>>> GetRentalHistoryByBook(int id) => await _rentalService.GetRentalHistoryByBookAsync(id);
-
-    [HttpGet("current")]
-    public async Task<ActionResult<IEnumerable<Rental>>> GetCurrentRentals() => await _rentalService.GetCurrentRentalsAsync();
-
-    [HttpGet("{id}")]
-    public async Task<ActionResult<Rental>> GetRental(int id) => await _rentalService.GetRentalAsync(id);
+    [HttpPost("RentBookById/{bookId}")]
+    public async Task<IActionResult> RentBookById(int bookId, int readerId, int rentalTime)
+    {
+        return null;
+    }
+    [HttpGet("getReadersRentals/{id}")]
+    public async Task<IActionResult> GetReadersRentals(int id)
+    {
+        return null;
+    }
+    [HttpPost("returnRent{rentId}")]
+    public async Task<IActionResult> ReturnRent(int rentId)
+    {
+        return null;
+    }
+    [HttpGet("getCurrentRentals")]
+    public async Task<IActionResult> GetCurrentRentals()
+    {
+        return null;
+    }
+    [HttpGet("getBookRentals/{id}")]
+    public async Task<IActionResult> GetBookRentals(int id)
+    {
+        return null;
+    }
 }
 
 
