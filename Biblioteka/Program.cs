@@ -68,7 +68,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IBookService, BookService>();
 builder.Services.AddScoped<IGenreService, GenreService>();
 builder.Services.AddScoped<IRentalService, RentalService>();
-builder.Services.AddReverseProxy().LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"));
+//builder.Services.AddReverseProxy().LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"));
 builder.Services.AddDbContext<BiblioApiDB>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("BiblioDBString")), ServiceLifetime.Scoped);
 
