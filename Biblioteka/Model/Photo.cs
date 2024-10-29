@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace PhotoService.Model
+namespace Biblioteka.Model
 {
     public class Photo
     {

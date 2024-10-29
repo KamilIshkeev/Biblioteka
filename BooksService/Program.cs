@@ -1,6 +1,6 @@
-using PhotoService.DatabContext;
-using PhotoService.Interfaces;
-using PhotoService.Services;
+using BooksService.DatabContext;
+using BooksService.Interfaces;
+using BooksService.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,7 +11,7 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddScoped<IPhotoInterface, PhotoServices>();
+builder.Services.AddScoped<IBookService, BookService>();
 
 
 
@@ -26,7 +26,7 @@ builder.Services.AddScoped<IPhotoInterface, PhotoServices>();
 //        });
 //});
 
-builder.Services.AddDbContext<PhotoDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("PhotosDbConnection")), ServiceLifetime.Scoped);
+builder.Services.AddDbContext<BookDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("BookDbConnection")), ServiceLifetime.Scoped);
 //builder.Services.AddDbContext<PhotoDbContext>(options =>
 //    options.UseSqlServer(builder.Configuration.GetConnectionString("PhotoDbConnection")), ServiceLifetime.Scoped); // Replace with your connection string
 

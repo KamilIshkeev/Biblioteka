@@ -15,7 +15,7 @@ namespace Biblioteka.Model
         public string Password { get; set; }
         [ForeignKey(nameof(Role))]
         public int? Id_Role { get; set; } = 2;
-        public Roles Role { get; set; }
+        public Roles? Role { get; set; }
 
 
 

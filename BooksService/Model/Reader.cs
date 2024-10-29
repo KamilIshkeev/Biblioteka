@@ -1,10 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations; 
-using System.ComponentModel.DataAnnotations.Schema; 
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
 
-
-
-
-namespace ReaderServ.Model
+namespace BooksService.Model
 {
     public class Reader
     {

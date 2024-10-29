@@ -15,7 +15,7 @@ namespace ReaderServ.Services
     {
         readonly ReaderDbContext _context = context;
         private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
-        public List<Readers> GetAllReaders([FromQuery] int? page, [FromQuery] int? pageSize)
+        public List<Reader> GetAllReaders([FromQuery] int? page, [FromQuery] int? pageSize)
         {
             var users = _context.Readers;
             var totalUsers = users.Count();
@@ -31,7 +31,7 @@ namespace ReaderServ.Services
         public async Task AddNewReader([FromQuery] createReader reader)
         {
             var check = await _context.Readers.FirstOrDefaultAsync(r => r.Login == reader.Login);
-            var Reader = new Readers
+            var Reader = new Reader
             {
                 Name = reader.Name,
                 Password = reader.Password,
@@ -59,7 +59,7 @@ namespace ReaderServ.Services
             await _context.SaveChangesAsync();
         }
 
-        public Readers GetReaderById(int id)
+        public Reader GetReaderById(int id)
         {
             return _context.Readers.FirstOrDefault(r => r.Id_Reader == id);
         }
@@ -73,7 +73,7 @@ namespace ReaderServ.Services
         {
             return _context.Readers.Any(r => r.Login == login);
         }
-        public List<Readers> GetAll()
+        public List<Reader> GetAll()
         {
             return _context.Readers.ToList();
         }
