@@ -6,11 +6,51 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Biblioteka.Migrations
 {
     /// <inheritdoc />
-    public partial class fest : Migration
+    public partial class first : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "Genre",
+                columns: table => new
+                {
+                    Id_Genre = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Genre", x => x.Id_Genre);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Photos",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    FileName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    FilePath = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Photos", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Roles",
+                columns: table => new
+                {
+                    Id_Role = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Roles", x => x.Id_Role);
+                });
+
             migrationBuilder.CreateTable(
                 name: "Book",
                 columns: table => new
@@ -27,32 +67,12 @@ namespace Biblioteka.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Book", x => x.Id_Book);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Genre",
-                columns: table => new
-                {
-                    Id_Genre = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Genre", x => x.Id_Genre);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Roles",
-                columns: table => new
-                {
-                    Id_Role = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Roles", x => x.Id_Role);
+                    table.ForeignKey(
+                        name: "FK_Book_Genre_GenreID",
+                        column: x => x.GenreID,
+                        principalTable: "Genre",
+                        principalColumn: "Id_Genre",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -85,8 +105,8 @@ namespace Biblioteka.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Rental_Start = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Rental_Time = table.Column<int>(type: "int", nullable: false),
-                    Id_Reader = table.Column<int>(type: "int", nullable: false),
-                    Id_Book = table.Column<int>(type: "int", nullable: false),
+                    Id_Reader = table.Column<int>(type: "int", nullable: true),
+                    Id_Book = table.Column<int>(type: "int", nullable: true),
                     Rental_End = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Rental_Status = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
@@ -97,15 +117,18 @@ namespace Biblioteka.Migrations
                         name: "FK_Rental_Book_Id_Book",
                         column: x => x.Id_Book,
                         principalTable: "Book",
-                        principalColumn: "Id_Book",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id_Book");
                     table.ForeignKey(
                         name: "FK_Rental_Reader_Id_Reader",
                         column: x => x.Id_Reader,
                         principalTable: "Reader",
-                        principalColumn: "Id_Reader",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id_Reader");
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Book_GenreID",
+                table: "Book",
+                column: "GenreID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Reader_Id_Role",
@@ -127,7 +150,7 @@ namespace Biblioteka.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Genre");
+                name: "Photos");
 
             migrationBuilder.DropTable(
                 name: "Rental");
@@ -137,6 +160,9 @@ namespace Biblioteka.Migrations
 
             migrationBuilder.DropTable(
                 name: "Reader");
+
+            migrationBuilder.DropTable(
+                name: "Genre");
 
             migrationBuilder.DropTable(
                 name: "Roles");

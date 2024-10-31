@@ -17,7 +17,7 @@ namespace Biblioteka.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.8")
+                .HasAnnotation("ProductVersion", "8.0.10")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -41,7 +41,8 @@ namespace Biblioteka.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("GenreID")
+                    b.Property<int?>("GenreID")
+                        .IsRequired()
                         .HasColumnType("int");
 
                     b.Property<string>("Title")
@@ -52,6 +53,8 @@ namespace Biblioteka.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id_Book");
+
+                    b.HasIndex("GenreID");
 
                     b.ToTable("Book");
                 });
@@ -70,6 +73,27 @@ namespace Biblioteka.Migrations
                     b.HasKey("Id_Genre");
 
                     b.ToTable("Genre");
+                });
+
+            modelBuilder.Entity("Biblioteka.Model.Photo", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FilePath")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Photos");
                 });
 
             modelBuilder.Entity("Biblioteka.Model.Reader", b =>
@@ -113,10 +137,10 @@ namespace Biblioteka.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id_Rent"));
 
-                    b.Property<int>("Id_Book")
+                    b.Property<int?>("Id_Book")
                         .HasColumnType("int");
 
-                    b.Property<int>("Id_Reader")
+                    b.Property<int?>("Id_Reader")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("Rental_End")
@@ -158,6 +182,17 @@ namespace Biblioteka.Migrations
                     b.ToTable("Roles");
                 });
 
+            modelBuilder.Entity("Biblioteka.Model.Book", b =>
+                {
+                    b.HasOne("Biblioteka.Model.Genre", "Genre")
+                        .WithMany()
+                        .HasForeignKey("GenreID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Genre");
+                });
+
             modelBuilder.Entity("Biblioteka.Model.Reader", b =>
                 {
                     b.HasOne("Biblioteka.Model.Roles", "Role")
@@ -171,15 +206,11 @@ namespace Biblioteka.Migrations
                 {
                     b.HasOne("Biblioteka.Model.Book", "Book")
                         .WithMany()
-                        .HasForeignKey("Id_Book")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("Id_Book");
 
                     b.HasOne("Biblioteka.Model.Reader", "Reader")
                         .WithMany()
-                        .HasForeignKey("Id_Reader")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("Id_Reader");
 
                     b.Navigation("Book");
 
