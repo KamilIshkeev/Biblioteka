@@ -109,9 +109,9 @@ app.UseCookiePolicy(new CookiePolicyOptions
 app.UseCors("CorsPolicy");
 
 
-//app.UseWhen(context => context.Request.Path.Value.Contains("/api/Books"),
-//    applicationBuilder => applicationBuilder.RunProxy(context =>
-//        context.ForwardTo("http://localhost:5136").AddXForwardedHeaders().Send()));
+app.UseWhen(context => context.Request.Path.Value.Contains("/api/Books"),
+    applicationBuilder => applicationBuilder.RunProxy(context =>
+        context.ForwardTo("https://localhost:7156").AddXForwardedHeaders().Send()));
 //app.UseWhen(context => context.Request.Path.Value.Contains("/api/Genres"),
 //    applicationBuilder => applicationBuilder.RunProxy(context =>
 //        context.ForwardTo("http://localhost:5136").AddXForwardedHeaders().Send()));

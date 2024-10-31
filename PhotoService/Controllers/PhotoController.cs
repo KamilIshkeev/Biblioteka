@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PhotoService.Interfaces;
@@ -18,7 +19,7 @@ namespace Biblioteka.Controllers
         public PhotoController(IPhotoInterface photoInterface)
         {
             _photoInterface = photoInterface;
-            _uploadPath = Path.Combine(Directory.GetCurrentDirectory(), "UploadedPhotos");
+            _uploadPath = Path.Combine(Directory.GetCurrentDirectory(), "Img");
 
             if (!Directory.Exists(_uploadPath))
             {
@@ -27,14 +28,9 @@ namespace Biblioteka.Controllers
         }
 
         [HttpPost("upload")]
-        public async Task<IActionResult> UploadPhoto(/*[FromForm]*/ IFormFile file)
+        public async Task<IActionResult> UploadPhoto(IFormFile file)
         {
-            //if (file == null || file.Length == 0)
-            //    return BadRequest("No file uploaded.");
-
-            //var photo = await _photoInterface.UploadPhoto(file);
-            //return Ok(photo);
-            return await _photoInterface.UploadPhoto(file);
+            return (IActionResult)await _photoInterface.UploadPhoto(file);
         }
 
         [HttpGet]

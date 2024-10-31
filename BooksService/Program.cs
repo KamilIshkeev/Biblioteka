@@ -2,6 +2,7 @@ using BooksService.DatabContext;
 using BooksService.Interfaces;
 using BooksService.Services;
 using Microsoft.EntityFrameworkCore;
+using ProxyKit;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,18 +14,18 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IBookService, BookService>();
 
+builder.Services.AddProxy();
 
-
-//builder.Services.AddCors(options =>
-//{
-//    options.AddPolicy("AllowAllOrigins",
-//        builder =>
-//        {
-//            builder.WithOrigins("https://localhost:7209;http://localhost:5278")
-//                   .AllowAnyMethod()
-//                   .AllowAnyHeader();
-//        });
-//});
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAllOrigins",
+        builder =>
+        {
+            builder.AllowAnyOrigin()
+                   .AllowAnyMethod()
+                   .AllowAnyHeader();
+        });
+});
 
 builder.Services.AddDbContext<BookDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("BookDbConnection")), ServiceLifetime.Scoped);
 //builder.Services.AddDbContext<PhotoDbContext>(options =>
@@ -42,6 +43,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseCors("AllowAllOrigins");
 app.UseHttpsRedirection();
 
 app.UseAuthorization();

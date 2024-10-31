@@ -11,7 +11,7 @@ using PhotoService.DatabContext;
 namespace PhotoService.Migrations
 {
     [DbContext(typeof(PhotoDbContext))]
-    [Migration("20241029163249_photo")]
+    [Migration("20241031141645_photo")]
     partial class photo
     {
         /// <inheritdoc />

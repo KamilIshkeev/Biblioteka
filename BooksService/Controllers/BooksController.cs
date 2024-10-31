@@ -10,6 +10,7 @@ namespace BooksService.Controllers
     [ApiController]
     public class BooksController : ControllerBase
     {
+        private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IBookService _bookService;
 
         public BooksController(IBookService bookService)

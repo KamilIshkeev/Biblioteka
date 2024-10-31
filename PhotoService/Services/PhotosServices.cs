@@ -3,27 +3,28 @@ using PhotoService.Interfaces;
 using PhotoService.Model;
 using PhotoService.DatabContext;
 using Microsoft.EntityFrameworkCore;
-
+using Microsoft.AspNetCore.Http.HttpResults;
 
 
 namespace PhotoService.Services
 {
-    public class PhotoServices : IPhotoInterface
+    public class PhotosService : IPhotoInterface
     {
-        private readonly PhotoDbContext _context;
+   
+        private PhotoDbContext _context;
         private readonly string _uploadPath;
 
-        public PhotoServices(PhotoDbContext context)
+        public PhotosService(PhotoDbContext context)
         {
             _context = context;
-            _uploadPath = Path.Combine(Directory.GetCurrentDirectory(), "UploadedPhotos");
+            _uploadPath = Path.Combine(Directory.GetCurrentDirectory(), "Img");
             if (!Directory.Exists(_uploadPath))
             {
                 Directory.CreateDirectory(_uploadPath);
             }
         }
         [HttpPost("upload")]
-        public async Task<IActionResult> UploadPhoto(/*[FromForm]*/ IFormFile file)
+        public async Task<IActionResult> UploadPhoto(IFormFile file)
         {
             if (file == null || file.Length == 0)
             {
@@ -112,5 +113,6 @@ namespace PhotoService.Services
 
             return new OkObjectResult(new { Message = "error" });
         }
+
     }
 }

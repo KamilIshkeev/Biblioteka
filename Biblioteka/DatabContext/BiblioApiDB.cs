@@ -16,7 +16,8 @@ namespace Biblioteka.DatabContext
             public DbSet<Reader> Reader { get; set; }
             public DbSet<Genre> Genre { get; set; }
             public DbSet<Rental> Rental { get; set; }
-        
+        public DbSet<Photo> Photos { get; set; }
+
     }
 
 

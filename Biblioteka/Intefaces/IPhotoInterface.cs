@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using PhotoService.Model;
+﻿using Biblioteka.Model;
+using Microsoft.AspNetCore.Mvc;
 
-namespace PhotoService.Interfaces
+namespace Biblioteka.Intefaces
 {
     public interface IPhotoInterface
     {
